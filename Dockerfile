@@ -17,11 +17,15 @@ USER ${USER}
 
 WORKDIR ${WORKDIR}
 
-RUN npx create-react-app thoughts
+RUN set -x; \
+    npx create-next-app \
+    ${USER} \
+    --use-npm \
+    --example "https://github.com/vercel/next-learn-starter/tree/master/learn-starter"
 
 WORKDIR ${WORKDIR}/${USER}
 
 RUN rm -rf src/*
 
 CMD set -x ; \
-    /usr/local/bin/npm start > /var/log/npm 2&>1 & /bin/sh
+    /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh
