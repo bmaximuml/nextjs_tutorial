@@ -25,7 +25,7 @@ RUN set -x; \
 
 WORKDIR ${WORKDIR}/${USER}
 
-RUN rm -rf src/*
+RUN rm -rf pages public
 
 CMD set -x ; \
     /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh
