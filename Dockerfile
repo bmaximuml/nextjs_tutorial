@@ -27,5 +27,11 @@ WORKDIR ${WORKDIR}/${USER}
 
 RUN rm -rf pages public
 
+# Install TailwindCSS
+RUN npm install \
+    tailwindcss \
+    postcss-preset-env \
+    postcss-flexbugs-fixes
+
 CMD set -x ; \
     /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh
