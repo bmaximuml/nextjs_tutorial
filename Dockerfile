@@ -1,4 +1,6 @@
-FROM node:alpine
+FROM node:14.15.1-alpine3.12
+# FROM node:15.4.0-alpine3.12
+# 15.4.0 Doesn't work.
 
 ARG USER=nextjs
 ARG WORKDIR=/run/
@@ -27,12 +29,17 @@ WORKDIR ${WORKDIR}/${USER}
 
 RUN rm -rf pages public
 
-# Install TailwindCSS, gray-matter
+# Install TailwindCSS, gray-matter, remark, date-fns
 RUN npm install \
     tailwindcss \
     postcss-preset-env \
     postcss-flexbugs-fixes \
-    gray-matter
+    postcss \
+    autoprefixer \
+    gray-matter \
+    remark \
+    remark-html \
+    date-fns
 
 CMD set -x ; \
     /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh

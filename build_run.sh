@@ -2,8 +2,11 @@
 set USER nextjs
 set DIR /home/max/Documents/nextjs_tutorial
 docker build \
+  --pull \
   -t {$USER} \
   --build-arg USER={$USER} \
+  # --no-cache \
+  # --file Dockerfile.slim \
   {$DIR}
 docker run -it \
   -v {$DIR}/src/components/:/run/{$USER}/components/ \
