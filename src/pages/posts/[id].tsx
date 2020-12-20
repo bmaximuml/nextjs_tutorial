@@ -1,12 +1,14 @@
+import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
+
 import Layout, { siteTitle } from '../../components/layout'
 import Date from '../../components/date'
 import utilStyles from '../../styles/utils.module.css'
-
 import { getAllPostIds, getPostData } from '../../lib/posts'
 
-export async function getStaticProps({ params }) {
-    const postData = await getPostData(params.id)
+export const getStaticProps: GetStaticProps = async context => {
+// export async function getStaticProps({ params }) {
+    const postData = await getPostData(context.params.id)
     return {
         props: {
             postData
@@ -14,7 +16,8 @@ export async function getStaticProps({ params }) {
     }
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
+// export async function getStaticPaths() {
     const paths = getAllPostIds()
     return {
         paths,
