@@ -1,0 +1,70 @@
+ARG USER=nextjs
+ARG WORKDIR=/run
+ARG SHELL=/bin/sh
+ARG REPO=https://github.com/benjilev08/nextjs_tutorial.git
+ARG BRANCH=dev
+
+FROM alpine:3.12 AS src
+
+ARG WORKDIR
+ARG SHELL
+ARG REPO
+ARG BRANCH
+
+RUN apk add --update --no-cache git
+
+RUN set -x; \
+    git clone \
+    --branch ${BRANCH} \
+    --depth 1 \
+    --no-tags \
+    --single-branch \
+    ${REPO} ${WORKDIR}
+
+FROM node:14.15.1-alpine3.12
+# FROM node:15.4.0-alpine3.12
+# 15.4.0 Doesn't work.
+
+ARG USER
+ARG WORKDIR
+ARG SHELL
+
+RUN set -x; \
+    adduser \
+        --home ${WORKDIR} \
+        --shell ${SHELL} \
+        --disabled-password \
+        ${USER}
+
+RUN touch /var/log/npm && chown ${USER} /var/log/npm
+
+# Install TailwindCSS, gray-matter, remark, date-fns
+# RUN set -x; \
+#     npm install --save-dev typescript @types/react @types/node ; \
+#     npm install \
+#     tailwindcss \
+#     postcss-preset-env \
+#     postcss-flexbugs-fixes \
+#     postcss \
+#     autoprefixer \
+#     gray-matter \
+#     remark \
+#     remark-html \
+#     date-fns
+
+RUN set -x; \
+    npm install
+
+USER ${USER}
+
+WORKDIR ${WORKDIR}/${USER}
+
+
+COPY --from=src --chown=${USER}:${USER} ${WORKDIR}/src .
+
+
+RUN ls /run/nextjs
+
+CMD set -x ; \
+    npm run build && \
+    npm run dev

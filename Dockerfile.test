@@ -1,0 +1,41 @@
+FROM node:14.15.1-alpine3.12
+# FROM node:15.4.0-alpine3.12
+# 15.4.0 Doesn't work.
+
+ARG USER=nextjs
+ARG WORKDIR=/run
+ARG SHELL=/bin/sh
+ARG PERMISSIONS=og-rwx
+
+RUN set -aeux; \
+    adduser \
+        --home ${WORKDIR} \
+        --shell ${SHELL} \
+        --disabled-password \
+        ${USER}
+
+RUN touch /var/log/npm && chown ${USER} /var/log/npm
+
+WORKDIR ${WORKDIR}/${USER}
+
+COPY --chown=${USER}:${USER} src/ .
+
+RUN set -aeux; \
+    npm install && \
+    chown -R ${USER}:${USER} .
+    # chown -R ${USER}:${USER} . && \
+    # chmod -R ${PERMISSIONS} .
+
+RUN ls -alphFs1 /run/nextjs
+
+USER ${USER}
+
+RUN set -aeux; \
+    # npm run build
+    npm run build && \
+    chmod ${PERMISSIONS} .
+
+RUN ls -alphFs1 /run/nextjs
+
+CMD set -aeux ; \
+    npm run dev
