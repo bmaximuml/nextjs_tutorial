@@ -6,7 +6,7 @@ ARG USER=nextjs
 ARG WORKDIR=/run/
 ARG SHELL=/bin/sh
 
-RUN set -x; \
+RUN set -aeux; \
     adduser \
         --home ${WORKDIR} \
         --shell ${SHELL} \
@@ -17,22 +17,22 @@ RUN touch /var/log/npm && chown ${USER} /var/log/npm
 
 USER ${USER}
 
-WORKDIR ${WORKDIR}
+# WORKDIR ${WORKDIR}
 
-RUN set -x; \
-    npx create-next-app \
-    ${USER} \
-    --use-npm \
-    --example "https://github.com/vercel/next-learn-starter/tree/master/learn-starter"
+# RUN set -aeux; \
+#     npx create-next-app \
+#     ${USER} \
+#     --use-npm \
+#     --example "https://github.com/vercel/next-learn-starter/tree/master/learn-starter"
 
 WORKDIR ${WORKDIR}/${USER}
 
-RUN set -x; \
-    rm -rf pages public ; \
-    touch tsconfig.json
+# RUN set -aeux; \
+#     rm -rf pages public ; \
+#     touch tsconfig.json
 
 # Install TailwindCSS, gray-matter, remark, date-fns
-RUN set -x; \
+RUN set -aeux; \
     npm install --save-dev typescript @types/react @types/node ; \
     npm install \
     tailwindcss \
@@ -45,6 +45,6 @@ RUN set -x; \
     remark-html \
     date-fns
 
-CMD set -x ; \
+CMD set -aeux ; \
     /usr/local/bin/npm run dev
     # /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh

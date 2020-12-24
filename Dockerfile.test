@@ -26,16 +26,12 @@ RUN set -aeux; \
     # chown -R ${USER}:${USER} . && \
     # chmod -R ${PERMISSIONS} .
 
-RUN ls -alphFs1 /run/nextjs
-
 USER ${USER}
 
 RUN set -aeux; \
     # npm run build
     npm run build && \
     chmod ${PERMISSIONS} .
-
-RUN ls -alphFs1 /run/nextjs
 
 CMD set -aeux ; \
     npm run dev
