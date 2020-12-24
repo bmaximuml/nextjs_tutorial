@@ -8,7 +8,6 @@ import Date from '../components/date'
 import { getSortedPostsData } from '../lib/posts'
 
 export const getStaticProps: GetStaticProps = async () => {
-// export async function getStaticProps() {
   const allPostsData = getSortedPostsData()
   return {
     props: {
@@ -17,7 +16,15 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 }
 
-export default function Home({ allPostsData }) {
+export default function Home({ 
+  allPostsData
+}: {
+  allPostsData: {
+    date: string
+    title: string
+    id: string
+  }[]
+}) {
   return (
     <Layout home>
       <Head>
