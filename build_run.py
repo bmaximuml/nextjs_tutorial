@@ -19,7 +19,7 @@ class BuildRunError(Exception):
 
 
 class BuildRun(object):
-    def main(self, user, dir, cache, pull, rm, detach, env, wait, push, run, build, verbose):
+    def main(self, user, dir, cache, pull, rm, detach, env, wait, push, run, build, repo_name, verbose):
         client = docker.from_env()
         api_client = APIClient(base_url='unix://var/run/docker.sock')
         name = f'{user}_{env}'
@@ -158,6 +158,9 @@ class BuildRun(object):
                 if run_success:
                     print(f'\r\tSuccess: http://localhost:{run_kwargs["ports"]["3000/tcp"]}/', flush=True)
 
+        if push:
+            for line in api_client.push():
+
 @click.command()
 @click.option('-u', '--user', type=str, default='nextjs', show_default=True, help='User and project name')
 @click.option('-d', '--dir', type=click.Path(exists=True, readable=True, file_okay=False), default='/home/max/Documents/nextjs_tutorial', show_default=True, help='Docker build context')
@@ -170,11 +173,12 @@ class BuildRun(object):
 @click.option('-s/-S', '--push/--no-push', default=False, show_default=True, help='Push image to Docker Hub after build')
 @click.option('-r/-R', '--run/--no-run', default=True, show_default=True, help='Start a container from the image')
 @click.option('-b/-B', '--build/--no-build', default=True, show_default=True, help='Build the image')
+@click.option('-o', '--repo-name', type=str, default='benjilev08', show_default=True, help='Docker repository name')
 @click.option('-v', '--verbose', count=True)
-def main(user, dir, cache, pull, rm, detach, env, wait, push, run, build, verbose):
+def main(user, dir, cache, pull, rm, detach, env, wait, push, run, build, repo_name, verbose):
     b = BuildRun()
     try:
-        b.main(user, dir, cache, pull, rm, detach, env, wait, verbose)
+        b.main(user, dir, cache, pull, rm, detach, env, wait, push, run, repo_name, verbose)
     except BuildRunError as e:
         print(e)
 
