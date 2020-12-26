@@ -3,6 +3,7 @@ ARG WORKDIR=/run
 ARG SHELL=/bin/sh
 ARG REPO=https://github.com/benjilev08/nextjs_tutorial.git
 ARG BRANCH=dev
+ARG PERMISSIONS=og-rwx
 
 FROM alpine:3.12 AS src
 
@@ -28,8 +29,10 @@ FROM node:14.15.1-alpine3.12
 ARG USER
 ARG WORKDIR
 ARG SHELL
+ARG PERMISSIONS
 
-RUN set -x; \
+RUN set -aeux; \
+    apk add --update curl; \
     adduser \
         --home ${WORKDIR} \
         --shell ${SHELL} \
@@ -38,35 +41,24 @@ RUN set -x; \
 
 RUN touch /var/log/npm && chown ${USER} /var/log/npm
 
-# Install TailwindCSS, gray-matter, remark, date-fns
-# RUN set -x; \
-#     npm install --save-dev typescript @types/react @types/node ; \
-#     npm install \
-#     tailwindcss \
-#     postcss-preset-env \
-#     postcss-flexbugs-fixes \
-#     postcss \
-#     autoprefixer \
-#     gray-matter \
-#     remark \
-#     remark-html \
-#     date-fns
+WORKDIR ${WORKDIR}/${USER}
 
-RUN set -x; \
-    npm install
+COPY --chown=${USER}:${USER} src/ .
+
+RUN set -aeux; \
+    npm install && \
+    chown -R ${USER}:${USER} .
+    # chown -R ${USER}:${USER} . && \
+    # chmod -R ${PERMISSIONS} .
 
 USER ${USER}
 
-WORKDIR ${WORKDIR}/${USER}
-
-
-COPY --from=src --chown=${USER}:${USER} ${WORKDIR}/src .
-
-
-RUN ls /run/nextjs
-
-CMD set -x ; \
+RUN set -aeux; \
+    # npm run build
     npm run build && \
+    chmod ${PERMISSIONS} .
+
+CMD set -aeux ; \
     npm run dev
 
 HEALTHCHECK --interval=10s CMD curl --fail localhost:3000 || exit 1
