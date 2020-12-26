@@ -35,9 +35,6 @@ RUN set -aeux; \
     remark-html \
     date-fns
 
-RUN chown -R ${USER}:${USER} . ; \
-    chmod -R ${PERMISSIONS} .
-
 USER ${USER}
 
 CMD set -aeux ; \
