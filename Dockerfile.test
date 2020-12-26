@@ -8,6 +8,7 @@ ARG SHELL=/bin/sh
 ARG PERMISSIONS=og-rwx
 
 RUN set -aeux; \
+    # apk add --update curl vim; \
     adduser \
         --home ${WORKDIR} \
         --shell ${SHELL} \
