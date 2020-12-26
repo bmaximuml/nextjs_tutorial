@@ -36,3 +36,5 @@ RUN set -aeux; \
 
 CMD set -aeux ; \
     npm run dev
+
+HEALTHCHECK --interval=10s CMD curl --fail localhost:3000 || exit 1
