@@ -159,7 +159,16 @@ class BuildRun(object):
                     print(f'\r\tSuccess: http://localhost:{run_kwargs["ports"]["3000/tcp"]}/', flush=True)
 
         if push:
-            for line in api_client.push():
+            if api_client.tag(tag, f'{repo_name}/{name}', tag=env):
+                if verbose >= 1:
+                    print(f'Tagged image as {repo_name}/{name}:{env}')
+            else:
+                raise BuildRunError(102, f'Failed to tag image as {repo_name}/{name}:{env}')
+            try:
+                [print(f'\t{line["status"]}: {line["progressDetail"]}') for line in api_client.push(f'{repo_name}/{name}', tag=env, stream=True, decode=True) if verbose >= 2 and 'status' in line and 'progressDetail' in line]
+            except docker.errors.APIError:
+                raise BuildRunError(103, f'Failed to push {repo_name}/{name}:{env}')
+
 
 @click.command()
 @click.option('-u', '--user', type=str, default='nextjs', show_default=True, help='User and project name')
@@ -178,7 +187,7 @@ class BuildRun(object):
 def main(user, dir, cache, pull, rm, detach, env, wait, push, run, build, repo_name, verbose):
     b = BuildRun()
     try:
-        b.main(user, dir, cache, pull, rm, detach, env, wait, push, run, repo_name, verbose)
+        b.main(user, dir, cache, pull, rm, detach, env, wait, push, run, build, repo_name, verbose)
     except BuildRunError as e:
         print(e)
 
