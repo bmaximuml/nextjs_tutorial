@@ -8,6 +8,7 @@ ARG SHELL=/bin/sh
 ARG PERMISSIONS=og-rwx
 
 RUN set -aeux; \
+    # apk add --update curl vim; \
     adduser \
         --home ${WORKDIR} \
         --shell ${SHELL} \
@@ -35,3 +36,5 @@ RUN set -aeux; \
 
 CMD set -aeux ; \
     npm run dev
+
+HEALTHCHECK --interval=10s CMD curl --fail localhost:3000 || exit 1

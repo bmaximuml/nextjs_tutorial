@@ -7,29 +7,18 @@ ARG WORKDIR=/run/
 ARG SHELL=/bin/sh
 
 RUN set -aeux; \
+    apk add --update curl vim; \
     adduser \
         --home ${WORKDIR} \
         --shell ${SHELL} \
         --disabled-password \
         ${USER}
 
-RUN touch /var/log/npm && chown ${USER} /var/log/npm
-
-USER ${USER}
-
-# WORKDIR ${WORKDIR}
-
-# RUN set -aeux; \
-#     npx create-next-app \
-#     ${USER} \
-#     --use-npm \
-#     --example "https://github.com/vercel/next-learn-starter/tree/master/learn-starter"
+RUN set -aeux; \
+    touch /var/log/npm && \
+    chown ${USER} /var/log/npm
 
 WORKDIR ${WORKDIR}/${USER}
-
-# RUN set -aeux; \
-#     rm -rf pages public ; \
-#     touch tsconfig.json
 
 # Install TailwindCSS, gray-matter, remark, date-fns
 RUN set -aeux; \
@@ -45,6 +34,10 @@ RUN set -aeux; \
     remark-html \
     date-fns
 
+USER ${USER}
+
 CMD set -aeux ; \
-    /usr/local/bin/npm run dev
+    npm install && \
+    npm run build && \
+    npm run dev
     # /usr/local/bin/npm run dev > /var/log/npm 2&>1 & /bin/sh
