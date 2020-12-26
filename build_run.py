@@ -19,7 +19,7 @@ class BuildRunError(Exception):
 
 
 class BuildRun(object):
-    def main(self, user, dir, cache, pull, rm, detach, env, wait, verbose):
+    def main(self, user, dir, cache, pull, rm, detach, env, wait, push, run, build, verbose):
         client = docker.from_env()
         api_client = APIClient(base_url='unix://var/run/docker.sock')
         name = f'{user}_{env}'
@@ -160,12 +160,15 @@ class BuildRun(object):
 @click.option('-d', '--dir', type=click.Path(exists=True, readable=True, file_okay=False), default='/home/max/Documents/nextjs_tutorial', show_default=True, help='Docker build context')
 @click.option('-c/-C', '--cache/--no-cache', default=True, show_default=True, help='Use docker image cache')
 @click.option('-p/-P', '--pull/--no-pull', default=True, show_default=True, help='Pull base images before build')
-@click.option('-r/-R', '--rm/--no-rm', default=False, show_default=True, help='Delete containers on exit')
+@click.option('-n/-N', '--rm/--no-rm', default=False, show_default=True, help='Delete containers on exit')
 @click.option('--detach/--no-detach', default=True, show_default=True, help='Pull base images before build')
 @click.option('-e', '--env', type=click.Choice(['dev', 'test', 'prod'], case_sensitive=False), default='dev', show_default=True, help='Specify environment')
 @click.option('-w', '--wait', type=int, default=5, help='Seconds to wait after starting container to check if it stays up')
+@click.option('-s/-S', '--push/--no-push', default=False, show_default=True, help='Push image to Docker Hub after build')
+@click.option('-r/-R', '--run/--no-run', default=True, show_default=True, help='Start a container from the image')
+@click.option('-b/-B', '--build/--no-build', default=True, show_default=True, help='Build the image')
 @click.option('-v', '--verbose', count=True)
-def main(user, dir, cache, pull, rm, detach, env, wait, verbose):
+def main(user, dir, cache, pull, rm, detach, env, wait, push, run, build, verbose):
     b = BuildRun()
     try:
         b.main(user, dir, cache, pull, rm, detach, env, wait, verbose)
